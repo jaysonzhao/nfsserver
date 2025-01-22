@@ -1,0 +1,246 @@
+﻿kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nfs-server
+  namespace: nfs-storage
+  uid: 5125cdad-cd33-46a8-92d9-b66a05d32253
+  resourceVersion: '3952963'
+  generation: 4
+  creationTimestamp: '2025-01-22T07:25:19Z'
+  annotations:
+    deployment.kubernetes.io/revision: '2'
+  managedFields:
+    - manager: Mozilla
+      operation: Update
+      apiVersion: apps/v1
+      time: '2025-01-22T07:45:51Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:spec':
+          'f:progressDeadlineSeconds': {}
+          'f:replicas': {}
+          'f:revisionHistoryLimit': {}
+          'f:selector': {}
+          'f:strategy':
+            'f:rollingUpdate':
+              .: {}
+              'f:maxSurge': {}
+              'f:maxUnavailable': {}
+            'f:type': {}
+          'f:template':
+            'f:metadata':
+              'f:labels':
+                .: {}
+                'f:app': {}
+            'f:spec':
+              'f:volumes':
+                .: {}
+                'k:{"name":"modules"}':
+                  .: {}
+                  'f:hostPath':
+                    .: {}
+                    'f:path': {}
+                    'f:type': {}
+                  'f:name': {}
+                'k:{"name":"nfs-storage"}':
+                  .: {}
+                  'f:name': {}
+                  'f:persistentVolumeClaim':
+                    .: {}
+                    'f:claimName': {}
+                'k:{"name":"proc"}':
+                  .: {}
+                  'f:hostPath':
+                    .: {}
+                    'f:path': {}
+                    'f:type': {}
+                  'f:name': {}
+                'k:{"name":"var-lib-nfs"}':
+                  .: {}
+                  'f:emptyDir': {}
+                  'f:name': {}
+              'f:containers':
+                'k:{"name":"nfs-server"}':
+                  'f:image': {}
+                  'f:volumeMounts':
+                    .: {}
+                    'k:{"mountPath":"/exports"}':
+                      .: {}
+                      'f:mountPath': {}
+                      'f:name': {}
+                    'k:{"mountPath":"/lib/modules"}':
+                      .: {}
+                      'f:mountPath': {}
+                      'f:name': {}
+                      'f:readOnly': {}
+                    'k:{"mountPath":"/proc"}':
+                      .: {}
+                      'f:mountPath': {}
+                      'f:name': {}
+                    'k:{"mountPath":"/var/lib/nfs"}':
+                      .: {}
+                      'f:mountPath': {}
+                      'f:name': {}
+                  'f:terminationMessagePolicy': {}
+                  .: {}
+                  'f:resources': {}
+                  'f:securityContext':
+                    .: {}
+                    'f:capabilities':
+                      .: {}
+                      'f:add': {}
+                    'f:privileged': {}
+                  'f:terminationMessagePath': {}
+                  'f:imagePullPolicy': {}
+                  'f:ports':
+                    .: {}
+                    'k:{"containerPort":111,"protocol":"TCP"}':
+                      .: {}
+                      'f:containerPort': {}
+                      'f:name': {}
+                      'f:protocol': {}
+                    'k:{"containerPort":2049,"protocol":"TCP"}':
+                      .: {}
+                      'f:containerPort': {}
+                      'f:name': {}
+                      'f:protocol': {}
+                    'k:{"containerPort":20048,"protocol":"TCP"}':
+                      .: {}
+                      'f:containerPort': {}
+                      'f:name': {}
+                      'f:protocol': {}
+                  'f:name': {}
+              'f:dnsPolicy': {}
+              'f:serviceAccount': {}
+              'f:restartPolicy': {}
+              'f:schedulerName': {}
+              'f:terminationGracePeriodSeconds': {}
+              'f:serviceAccountName': {}
+              'f:securityContext': {}
+    - manager: kube-controller-manager
+      operation: Update
+      apiVersion: apps/v1
+      time: '2025-01-22T07:45:59Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:deployment.kubernetes.io/revision': {}
+        'f:status':
+          'f:availableReplicas': {}
+          'f:conditions':
+            .: {}
+            'k:{"type":"Available"}':
+              .: {}
+              'f:lastTransitionTime': {}
+              'f:lastUpdateTime': {}
+              'f:message': {}
+              'f:reason': {}
+              'f:status': {}
+              'f:type': {}
+            'k:{"type":"Progressing"}':
+              .: {}
+              'f:lastTransitionTime': {}
+              'f:lastUpdateTime': {}
+              'f:message': {}
+              'f:reason': {}
+              'f:status': {}
+              'f:type': {}
+          'f:observedGeneration': {}
+          'f:readyReplicas': {}
+          'f:replicas': {}
+          'f:updatedReplicas': {}
+      subresource: status
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nfs-server
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nfs-server
+    spec:
+      restartPolicy: Always
+      serviceAccountName: default
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      securityContext: {}
+      containers:
+        - resources: {}
+          terminationMessagePath: /dev/termination-log
+          name: nfs-server
+          securityContext:
+            capabilities:
+              add:
+                - SYS_ADMIN
+                - SETPCAP
+                - DAC_READ_SEARCH
+            privileged: true
+          ports:
+            - name: nfs
+              containerPort: 2049
+              protocol: TCP
+            - name: mountd
+              containerPort: 20048
+              protocol: TCP
+            - name: rpcbind
+              containerPort: 111
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: nfs-storage
+              mountPath: /exports
+            - name: proc
+              mountPath: /proc
+            - name: modules
+              readOnly: true
+              mountPath: /lib/modules
+            - name: var-lib-nfs
+              mountPath: /var/lib/nfs
+          terminationMessagePolicy: File
+          image: 'quay.io/jaysonzhao/nfsserver:v7'
+      serviceAccount: default
+      volumes:
+        - name: nfs-storage
+          persistentVolumeClaim:
+            claimName: nfs-rbd-pvc
+        - name: proc
+          hostPath:
+            path: /proc
+            type: ''
+        - name: modules
+          hostPath:
+            path: /lib/modules
+            type: ''
+        - name: var-lib-nfs
+          emptyDir: {}
+      dnsPolicy: ClusterFirst
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+status:
+  observedGeneration: 4
+  replicas: 1
+  updatedReplicas: 1
+  readyReplicas: 1
+  availableReplicas: 1
+  conditions:
+    - type: Available
+      status: 'True'
+      lastUpdateTime: '2025-01-22T07:33:38Z'
+      lastTransitionTime: '2025-01-22T07:33:38Z'
+      reason: MinimumReplicasAvailable
+      message: Deployment has minimum availability.
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2025-01-22T07:45:59Z'
+      lastTransitionTime: '2025-01-22T07:25:19Z'
+      reason: NewReplicaSetAvailable
+      message: ReplicaSet "nfs-server-6c65c47d87" has successfully progressed.
