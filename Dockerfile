@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/ubi:latest
+FROM registry.access.redhat.com/ubi9/ubi:latest
 
 # Install required packages
 RUN dnf install -y nfs-utils hostname procps-ng && \
