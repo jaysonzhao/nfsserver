@@ -37,10 +37,10 @@ EOF
 mount -t rpc_pipefs sunrpc /var/lib/nfs/rpc_pipefs
 
 # Start rpcbind daemon with IPv4 only
-/usr/sbin/rpcbind -w -h 127.0.0.1
+/usr/sbin/rpcbind -w 
 
 # Start NFS services
-/usr/sbin/rpc.nfsd -V 4 -N 3 -H 127.0.0.1
+/usr/sbin/rpc.nfsd -V 4 -N 3 
 /usr/sbin/rpc.mountd -N 3 -V 4 --port 20048 -H 127.0.0.1 --foreground &
 
 # Export the filesystems
