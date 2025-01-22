@@ -1,1 +1,1 @@
-mount -v -t nfs4 <hostname>:/  /<mountpoint>
+mount -v -t nfs4 [hostname]:/  /[mountpoint]
