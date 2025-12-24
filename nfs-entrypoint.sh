@@ -1,4 +1,4 @@
-# Test review
+# Create PR for review
 #!/bin/bash
 set -ex
 
